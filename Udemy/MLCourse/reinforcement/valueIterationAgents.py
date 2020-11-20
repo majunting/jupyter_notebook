@@ -37,7 +37,12 @@ class ValueIterationAgent(ValueEstimationAgent):
     self.values = util.Counter() # A Counter is a dict with default 0
      
     "*** YOUR CODE HERE ***"
-    
+    for i in range(self.iterations):
+      new_values = util.Counter()
+      for state in self.mdp.getStates():
+        new_values[state] = self.compute_value(state, self.compute_action(state))
+      self.values = new_values.copy()
+
   def getValue(self, state):
     """
       Return the value of the state (computed in __init__).
@@ -53,8 +58,9 @@ class ValueIterationAgent(ValueEstimationAgent):
       necessarily create this quantity and you may have
       to derive it on the fly.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # "*** YOUR CODE HERE ***"
+    return self.compute_value(state, action)
+    # util.raiseNotDefined()
 
   def getPolicy(self, state):
     """
@@ -64,10 +70,32 @@ class ValueIterationAgent(ValueEstimationAgent):
       there are no legal actions, which is the case at the
       terminal state, you should return None.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # "*** YOUR CODE HERE ***"
+    return self.compute_action(state)
+    # util.raiseNotDefined()
 
   def getAction(self, state):
     "Returns the policy at the state (no exploration)."
     return self.getPolicy(state)
   
+  def compute_action(self, state):
+    if self.mdp.isTerminal(state):
+      return None
+    max_q_value = float('-inf')
+    best_action = None
+    for action in self.mdp.getPossibleActions(state):
+      q_value = self.compute_value(state, action)
+      if q_value > max_q_value:
+        max_q_value = q_value
+        best_action = action
+    return best_action
+
+  def compute_value(self, state, action):
+    if not action:
+      return 0.0
+    q_value = 0.0
+    for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action):
+      reward = self.mdp.getReward(state, action, next_state)
+      value = self.values[next_state]
+      q_value += prob * (reward + self.discount * value)
+    return q_value
