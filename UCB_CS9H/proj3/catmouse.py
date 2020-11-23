@@ -3,6 +3,9 @@ import argparse
 from tkinter import *
 
 from libs.Arena import Arena
+from libs.Vector import *
+from libs.Color import *
+from libs.Turtle import Turtle
 
 from Cat import Cat
 from Mouse import Mouse
@@ -26,14 +29,17 @@ if __name__ == '__main__':
     #########################################
 
     # YOUR CODE HERE
-    cat_radius = ...
-    cat_angle = ...
-    mouse_angle = ...
+    cat_radius = 100.0
+    cat_angle = 35.0
+    mouse_angle = -396.0
     
+    Turtle.origin = Vector(400, 300)
+    Turtle.m = 50.0
+
     # TODO: Create your instance for Statue, Cat and Mouse here
-    statue = ...
-    mouse = ...
-    cat = ...
+    statue = Statue(Turtle.origin, 0)
+    mouse = Mouse(Turtle.origin + Vector(0, -50).rotate(mouse_angle), 0)
+    cat = Cat(Turtle.origin + Vector(0, cat_radius/2).rotate(cat_angle), 0, mouse=mouse)
 
     # END OF YOUR CODE
 
