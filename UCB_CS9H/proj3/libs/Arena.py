@@ -3,7 +3,7 @@
 from tkinter import *
 
 from libs.Vector import *
-
+from globalVariables import *
 
 class Arena(Frame):
     """This class provides the user interface for an arena of turtles."""
