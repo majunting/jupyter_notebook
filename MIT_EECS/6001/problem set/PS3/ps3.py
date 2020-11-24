@@ -91,8 +91,8 @@ def get_word_score(word, n):
     n: int >= 0
     returns: int >= 0
     """
+    
     word = word.lower()
-    word_list = []
     word_len = len(word)
     first_comp= 0
     for char in word:
@@ -143,16 +143,20 @@ def deal_hand(n):
     """
     
     hand={}
-    num_vowels = int(math.ceil(n / 3))
+    num_vowels = int(math.ceil(n / 3)) - 1
+    num_wildcards = 1
 
     for i in range(num_vowels):
         x = random.choice(VOWELS)
         hand[x] = hand.get(x, 0) + 1
+        
+    for i in range(num_wildcards):
+        hand['*'] = 1
     
-    for i in range(num_vowels, n):    
+    for i in range(num_vowels + num_wildcards, n):    
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
-    
+        
     return hand
 
 #
@@ -176,8 +180,16 @@ def update_hand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
-
-    pass  # TO DO... Remove this line when you implement this function
+    
+    new_hand = hand.copy()
+    for letter in word.lower():
+        if letter in new_hand.keys():
+            # if new_hand[letter] > 1:
+            new_hand[letter] -= 1
+            # elif new_hand[letter] == 1:
+                # del new_hand[letter]
+    return new_hand
+    # pass  # TO DO... Remove this line when you implement this function
 
 #
 # Problem #3: Test word validity
@@ -193,8 +205,32 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
-
-    pass  # TO DO... Remove this line when you implement this function
+    
+    word = word.lower()
+    if word.find('*') == -1:
+        if not word.isalpha():
+            return False
+        if word not in word_list:
+            return False
+        # create a new dict
+        new_dict = {}
+        for letter in word:
+            if letter in new_dict.keys():
+                new_dict[letter] += 1
+            else:
+                new_dict[letter] = 1
+        for key in new_dict.keys():
+            if key not in hand.keys() or new_dict[key] > hand[key]:
+                return False
+        return True
+    else:
+        result = False
+        for vowel in VOWELS:
+            new_word = word.replace('*', vowel)
+            result = result or is_valid_word(new_word, hand, word_list)
+        return result
+            
+    # pass  # TO DO... Remove this line when you implement this function
 
 #
 # Problem #5: Playing a hand
