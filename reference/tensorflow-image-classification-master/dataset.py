@@ -18,13 +18,21 @@ def load_train(train_path, image_size, classes):
         path = os.path.join(train_path, fld, '*g')
         files = glob.glob(path)
         for fl in files:
+#             print(fl)
+            image_id = fl.split("_")[2].split(".", 1)[0]
+            FL_image_dir = "../../../../20201127114815/Aria2/Area2_Cell_" + image_id + ".png"
             image = cv2.imread(fl)
-            image = cv2.resize(image, (image_size, image_size), cv2.INTER_LINEAR)
+            image = np.asarray(cv2.resize(image, (image_size, image_size), cv2.INTER_LINEAR))
+            fl_image = cv2.imread(FL_image_dir, 0)
+            fl_image = np.asarray(cv2.resize(fl_image, (image_size, image_size), cv2.INTER_LINEAR))
+            image = np.dstack((image, fl_image))
             images.append(image)
+            print(image.shape, type(image), fl)
             label = np.zeros(len(classes))
             label[index] = 1.0
             labels.append(label)
-            flbase = os.path.basename(fl)
+#             flbase = os.path.basename(fl)
+            flbase = os.path.basename(image_id)
             ids.append(flbase)
             cls.append(fld)
     images = np.array(images)
